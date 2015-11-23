@@ -7,7 +7,6 @@
 
 #include "targetver.h"
 
-
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <stdio.h>
 #include <tchar.h>
@@ -22,5 +21,8 @@
 #include <map>
 #include <fstream>
 #include <ostream>
+#include <sstream>
+#include <vector>
+#include <algorithm>
 
 using namespace std;

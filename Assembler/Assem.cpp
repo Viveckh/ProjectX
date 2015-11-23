@@ -1,8 +1,11 @@
 #include "stdafx.h"
 
 #include "SymTab.h"
+#include "FileAccess.h"
+#include "Instruction.h"
 
-int main() {
+int main(int argc, char *argv[]) {
+
 	SymbolTable symTable;
 	/*
 	SYMBOLTABLE TESTING CODE
@@ -26,6 +29,16 @@ int main() {
 		cout << "Safal exists in that location" << endl;
 	}
 	*/
-
+	
+	string buffer;
+	FileAccess faccess(argc, argv);
+	
+	while (faccess.GetNextLine(buffer)) {
+		Instruction instruction;
+		cout << buffer << endl;
+		instruction.ParseInstruction(buffer);
+		cout << endl;
+	}
+	
 	system("pause");
 }
