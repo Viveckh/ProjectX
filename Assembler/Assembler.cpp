@@ -24,7 +24,7 @@ void Assembler::PassI()
 
 						// Successively process each line of source code.
 	for (; ; ) {
-
+		m_inst.reset();
 		// Read the next line from the source file.
 		string buff;
 		if (!m_faccess.GetNextLine(buff)) {
@@ -33,6 +33,7 @@ void Assembler::PassI()
 			// We will let this error be reported by Pass II.
 			return;
 		}
+	
 		// Parse the line and get the instruction type.
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
 
@@ -50,6 +51,71 @@ void Assembler::PassI()
 
 			m_symtab.AddSymbol(m_inst.GetLabel(), loc);
 		}
+		// Compute the location of the next instruction.
+		loc = m_inst.LocationNextInstruction(loc);
+		cout << endl;
+	}
+}
+
+void Assembler::PassII() {
+	int loc = 0;
+	int opCode, operand;
+	int inst;
+	m_faccess.rewind();
+
+	cout << "LOC\tCONTENT\t\tORIGINAL STATEMENT" << endl;
+	for (; ; ) {	
+		m_inst.reset();
+		// Read the next line from the source file.
+		string buff;
+		m_faccess.GetNextLine(buff);
+
+		// Parse the line and get the instruction type.
+		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
+
+		// If this is an end statement,
+		// Determine if the end is the last statement.
+		if (st == Instruction::ST_End) {
+			if (m_faccess.GetNextLine(buff)) {
+				cout << "ERROR MESSAGE! Text after end opcode." << endl;
+			}
+			cout << "\t\t\t" << buff << endl << endl;
+			return;
+		}
+
+		// Labels can only be on machine language and assembler language
+		// instructions.
+		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) {
+			cout << "\t\t\t" << buff << endl;
+			continue;
+		}
+
+		cout << loc << "\t";
+		
+		opCode = m_inst.GetNumOpCode();
+		if (m_inst.isNumericOperand()) {
+			operand = m_inst.GetOperandValue();
+		}
+		else if (m_symtab.LookupSymbol(m_inst.GetOperand())) {
+			operand = m_symtab.LookupLocation(m_inst.GetOperand());
+		}
+		else {
+			operand = 0;
+		}
+
+		if (operand == -999) {
+			cout << "Multiply defined";
+		}
+		else if (m_inst.GetOpCode() == "org" || m_inst.GetOpCode() == "ds") {
+			cout << "\t\t";
+		}
+		else {
+			inst = opCode * 10000;
+			inst = inst + operand;
+			cout << setw(6) << setfill('0') << inst << "\t\t";
+		}
+
+		cout << buff << endl;
 		// Compute the location of the next instruction.
 		loc = m_inst.LocationNextInstruction(loc);
 	}

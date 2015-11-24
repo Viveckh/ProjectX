@@ -17,6 +17,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string>
+#include <iomanip>
 #include <windows.h>
 #include <map>
 #include <fstream>

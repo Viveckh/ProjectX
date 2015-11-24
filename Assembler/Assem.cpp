@@ -1,8 +1,5 @@
 #include "stdafx.h"
-
-#include "SymTab.h"
-#include "FileAccess.h"
-#include "Instruction.h"
+#include "Assembler.h"
 
 int main(int argc, char *argv[]) {
 
@@ -29,7 +26,7 @@ int main(int argc, char *argv[]) {
 		cout << "Safal exists in that location" << endl;
 	}
 	*/
-	
+	/*
 	string buffer;
 	FileAccess faccess(argc, argv);
 	
@@ -39,6 +36,18 @@ int main(int argc, char *argv[]) {
 		instruction.ParseInstruction(buffer);
 		cout << endl;
 	}
-	
+	*/
+
+	Assembler assem(argc, argv);
+
+	// Establish the location of the labels:
+	assem.PassI();
+
+	// Display the symbol table.
+	assem.DisplaySymbolTable();
+
+	// Output the symbol table and the translation.
+	assem.PassII();
+
 	system("pause");
 }

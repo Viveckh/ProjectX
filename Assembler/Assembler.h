@@ -16,9 +16,9 @@ public:
 
 	// Pass I - establish the locations of the symbols
 	void PassI();
-
+	
 	// Pass II - generate a translation
-	//void PassII();
+	void PassII();
 
 	// Display the symbols in the symbol table.
 	void DisplaySymbolTable() { m_symtab.DisplaySymbolTable(); }

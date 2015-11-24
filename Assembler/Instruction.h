@@ -16,6 +16,17 @@ public:
 	};
 	~Instruction() { };
 
+	void reset() {
+		m_Label = "";
+		m_OpCode = "";
+		m_Operand = "";
+		m_instruction = "";
+		m_NumOpCode = -99;
+		m_type = ST_NULL;
+		m_IsNumericOperand = false;
+		m_OperandValue = 0;
+	}
+
 	// Codes to indicate the type of instruction we are processing.  Why is this inside the
 	// class?
 	enum InstructionType {
@@ -34,14 +45,32 @@ public:
 
 	// To access the label
 	inline string &GetLabel() {
-
 		return m_Label;
+	};
+
+	inline string &GetOpCode() {
+		return m_OpCode;
+	};
+
+	inline int &GetNumOpCode() {
+		return m_NumOpCode;
+	};
+
+	inline string &GetOperand() {
+		return m_Operand;
+	};
+
+	inline int &GetOperandValue() {
+		return m_OperandValue;
 	};
 
 	// To determine if a label is blank.
 	inline bool isLabel() {
-
 		return !m_Label.empty();
+	};
+
+	inline bool isNumericOperand() {
+		return m_IsNumericOperand;
 	};
 
 

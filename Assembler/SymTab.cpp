@@ -36,20 +36,26 @@ SymbolTable::DisplaySymbolTable()
 {
 	map<string, int>::iterator st;
 	int i = 0;
+	cout << "SYMBOL#\tSYMBOL\tLOCATION" << endl;
 	for (st = m_symbolTable.begin(); st != m_symbolTable.end(); st++, i++) {
 		cout << i << "\t" << st->first << "\t" << st->second << endl;
 	}
+	cout << endl;
 }
 
 bool
-SymbolTable::LookupSymbol(string &a_symbol, int &a_loc)
+SymbolTable::LookupSymbol(string &a_symbol)
 {
-	map<string, int>::iterator st;
-	st = m_symbolTable.find(a_symbol);
-	if (st->second == a_loc) {
-		return true;
+	if (m_symbolTable.find(a_symbol) == m_symbolTable.end()) {
+		return false;
 	}
 	else { 
-		return false; 
+		return true; 
 	}
+}
+
+int SymbolTable::LookupLocation(string a_symbol) {
+	map<string, int>::iterator st;
+	st = m_symbolTable.find(a_symbol);
+	return st->second;
 }
