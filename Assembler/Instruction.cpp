@@ -9,7 +9,38 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 	
 	string ibuff;
 	bool commentFlag = false;
+	
+	//This loop below counts the number of columns
+	int count = 0;
+	istringstream temp(a_buff);
+	for (; ;) {
+		ibuff = "";
+		temp >> ibuff;
+		if (ibuff.size() != 0) {
+			if (ibuff.find_first_of(";") == string::npos) {
+				count++;
+			}
+			else {
+				if (ibuff[0] == ';') {
+					break;
+				}
+				else {
+					count++;
+					break;
+				}
+			}
+		}
+		else {
+			break;
+		}
+	}
 
+	bool labelFlag = true;
+	int current = 1;
+	if (count != 3) {
+		labelFlag = false;
+	}
+	
 	for (; ; ) {
 
 		// CLear what was previously in ibuff.
@@ -24,16 +55,17 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 			cout << "No more data" << endl;
 			cout << "label: " << m_Label << ", OpCode: " << m_OpCode << ", Operand: " << m_Operand
 				<< ", numOpCode: " << m_NumOpCode << ", operandvalue: " << m_OperandValue << endl;
+			cout << "Count of words: " << count << endl;
 			return m_type;
 		}
 
 		string ibuffConverted;
 		string ibuffPlainParse;
+
 		vector<string>::iterator it;
 
 		for (int i = 0; i < ibuff.length(); i++) {
 			if (ibuff[i] == ';') {
-				cout << m_type << endl;
 				if (i == 0) {
 					if (m_type == 0) {
 						cout << "It's a full comment" << endl;
@@ -41,6 +73,7 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 					}
 					cout << "label: " << m_Label << ", OpCode: " << m_OpCode << ", Operand: " << m_Operand
 						<< ", numOpCode: " << m_NumOpCode << ", operandvalue: " << m_OperandValue << endl;
+					cout << "Count of words: " << count << endl;
 					return m_type;
 				}
 				commentFlag = true;
@@ -50,18 +83,20 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 			ibuffConverted += tolower(ibuff[i]);
 		}
 
-		if (find(machineCodes.begin(), machineCodes.end(), ibuffConverted) != machineCodes.end()) {
+		if ((m_OpCode.empty() && labelFlag == false) && find(machineCodes.begin(), machineCodes.end(), ibuffConverted) != machineCodes.end()) {
 			cout << ibuffConverted << " - Machine Instruction found" << endl;
 			it = find(machineCodes.begin(), machineCodes.end(), ibuffConverted);
 			m_OpCode = ibuffConverted;
 			m_NumOpCode = distance(machineCodes.begin(), it) + 1;
 			m_type = ST_MachineLanguage;
+			current++;
 		}
-		else if (find(asmCodes.begin(), asmCodes.end(), ibuffConverted) != asmCodes.end()) {
+		else if ((m_OpCode.empty() && labelFlag == false) && find(asmCodes.begin(), asmCodes.end(), ibuffConverted) != asmCodes.end()) {
 			cout << ibuffConverted << " - Assembler Instruction found" << endl;
 			m_OpCode = ibuffConverted;
 			m_NumOpCode = 0;
 			m_type = ST_AssemblerInstr;
+			current++;
 		}
 		else {
 			if (m_OpCode.empty()) {
@@ -75,9 +110,12 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 				}
 				else {
 					//Get it from the symbol table
+					
 				}
 			}
+			current++;
 		}
+		if (current != 1) labelFlag = false;
 	}
 }
 
