@@ -3,12 +3,12 @@
 //
 #include "stdafx.h"
 #include "Assembler.h"
-#include "Errors.h"
 
 // Constructor for the assembler.  Note: we are passing argc and argv to the file access constructor.
 Assembler::Assembler(int argc, char *argv[])
 	: m_faccess(argc, argv)
 {
+	m_err.InitErrorReporting();
 	// Nothing else to do here.
 }
 

@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
 
-	SymbolTable symTable;
+	//SymbolTable symTable;
 	/*
 	SYMBOLTABLE TESTING CODE
 
@@ -48,6 +48,9 @@ int main(int argc, char *argv[]) {
 
 	// Output the symbol table and the translation.
 	assem.PassII();
+
+	// Display Errors.
+	assem.DisplayErrorMessages();
 
 	system("pause");
 }

@@ -7,6 +7,7 @@
 #include "SymTab.h"
 #include "Instruction.h"
 #include "FileAccess.h"
+#include "Errors.h"
 
 class Assembler {
 
@@ -23,6 +24,9 @@ public:
 	// Display the symbols in the symbol table.
 	void DisplaySymbolTable() { m_symtab.DisplaySymbolTable(); }
 
+	// Display the errors.
+	void DisplayErrorMessages() { m_err.DisplayErrors();  }
+
 	// Run emulator on the translation.
 
 private:
@@ -30,5 +34,6 @@ private:
 	FileAccess m_faccess;	    // File Access object
 	SymbolTable m_symtab;	// Symbol table object
 	Instruction m_inst;	    // Instruction object
+	Errors m_err;		//Error object
 };
 
