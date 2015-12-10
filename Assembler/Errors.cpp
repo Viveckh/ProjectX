@@ -12,6 +12,8 @@ void Errors::RecordError(string &a_emsg) {
 }
 
 void Errors::DisplayErrors() {
+
+	cout << "---------ERROR LIST-------------------------------------" << endl << endl;
 	if (m_ErrorMsgs.empty()) {
 		cout << "NO ERRORS FOUND!" << endl << endl;
 	}
@@ -19,7 +21,8 @@ void Errors::DisplayErrors() {
 		cout << "The Following Errors were found:" << endl << endl;
 		vector<string>::iterator er;
 		for (er = m_ErrorMsgs.begin(); er != m_ErrorMsgs.end(); er++) {
-			cout << "-> " << *er << endl;
+			cout << "-> " << *er << endl << endl;
 		}
 	}
+	cout << endl << "----------------------------------------------------------" << endl;
 }

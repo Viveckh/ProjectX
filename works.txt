@@ -1,0 +1,33 @@
+;this is a test
+       org    100 
+hi     read    x;comment immediately after statement
+       load    x
+ hay   store   y ; This is the another comment.
+       write   x
+       bp      hi
+       halt
+;test
+x      dc      5
+y      ds      99
+b      dc      555 
+a      dc      100 
+     end
+
+;this is a test
+       org    100 
+1hidkhkdlaglangag     read   ;comment immediately after statement
+       load    bak
+ hay   stoe   y ; This is the another comment.
+       writ   x
+       bp      10000000
+       halt
+;test
+x      dc      5
+y      ds      99
+b      dc      555 
+b      dc 41
+a      dc      100 
+     
+
+
+Random text here

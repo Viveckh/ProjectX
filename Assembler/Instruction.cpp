@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "Instruction.h"
+#include "Errors.h"
 
 Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 	m_instruction = a_buff;
 	istringstream input(a_buff);
+	string errorMsg;
 
 	// In the following loop we will read each element from the buffer and display
 	// it.  Note how we can determine if we are done.
@@ -41,6 +43,7 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 	if (count != 3) {
 		labelFlag = false;
 	}
+
 	
 	for (; ; ) {
 
@@ -68,7 +71,7 @@ Instruction::InstructionType Instruction::ParseInstruction(string &a_buff) {
 		for (int i = 0; i < ibuff.length(); i++) {
 			if (ibuff[i] == ';') {
 				if (i == 0) {
-					if (m_type == 0) {
+					if (m_type == 0 && m_Label == "") {
 						//cout << "It's a full comment" << endl;
 						m_type = ST_Comment;
 					}

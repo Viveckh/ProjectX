@@ -8,7 +8,6 @@
 Assembler::Assembler(int argc, char *argv[])
 	: m_faccess(argc, argv)
 {
-	m_err.InitErrorReporting();
 	// Nothing else to do here.
 }
 
@@ -58,17 +57,26 @@ void Assembler::PassI()
 }
 
 void Assembler::PassII() {
+	m_err.InitErrorReporting();
+	string errorMsg;
 	int loc = 0;
 	int opCode, operand;
 	int inst;
 	m_faccess.rewind();
 
+	cout << "---------TRANSLATION OF PROGRAM-----------------------------" << endl << endl;
 	cout << "LOC\tCONTENT\t\tORIGINAL STATEMENT" << endl;
+	
 	for (; ; ) {	
 		m_inst.reset();
 		// Read the next line from the source file.
 		string buff;
-		m_faccess.GetNextLine(buff);
+		if (!m_faccess.GetNextLine(buff)) {
+			errorMsg = "File ended without an END statement";
+			m_err.RecordError(errorMsg);
+			cout << endl << "--------------------------------------------------------" << endl;
+			return;
+		}
 
 		// Parse the line and get the instruction type.
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
@@ -77,10 +85,18 @@ void Assembler::PassII() {
 		// Determine if the end is the last statement.
 		if (st == Instruction::ST_End) {
 			if (m_faccess.GetNextLine(buff)) {
-				cout << "ERROR MESSAGE! Text after end opcode." << endl;
+				errorMsg = "Statements found after END opcode";
+				m_err.RecordError(errorMsg);
 			}
 			cout << "\t\t\t" << buff << endl << endl;
+			cout << endl << "--------------------------------------------------------" << endl;
 			return;
+		}
+		
+		opCode = m_inst.GetNumOpCode();
+		if ((opCode < 0 || opCode > 13) && (st != Instruction::ST_Comment && buff.find_first_not_of(' ') != string::npos)) {
+			errorMsg = "Illegal Opcode\r\n" + buff;
+			m_err.RecordError(errorMsg);
 		}
 
 		// Labels can only be on machine language and assembler language
@@ -91,8 +107,18 @@ void Assembler::PassII() {
 		}
 
 		cout << loc << "\t";
-		
-		opCode = m_inst.GetNumOpCode();
+
+		if (m_inst.GetLabel() != "") {
+			if (strlen(m_inst.GetLabel().c_str()) > 10) {
+				errorMsg = "Too Long Labelname\r\n" + buff;
+				m_err.RecordError(errorMsg);
+			}
+			if (!isalpha(m_inst.GetLabel()[0])) {
+				errorMsg = "The first letter of the labelname " + m_inst.GetLabel() + " is not a letter\r\n" + buff;
+				m_err.RecordError(errorMsg);
+			}
+		}
+
 		if (m_inst.isNumericOperand()) {
 			operand = m_inst.GetOperandValue();
 		}
@@ -103,8 +129,19 @@ void Assembler::PassII() {
 			operand = 0;
 		}
 
+		if (operand > 999999) {
+			errorMsg = "Operand Value too high\r\n" + buff;
+			m_err.RecordError(errorMsg);
+		}
+
+		if (operand == 0 && (m_inst.GetOpCode() != "halt" && m_inst.GetOpCode() != "end")) {
+			errorMsg = "Operand value cannot be null/undefined\r\n" + buff;
+			m_err.RecordError(errorMsg);
+		}
+
 		if (operand == -999) {
-			cout << "Multiply defined";
+			errorMsg = "Multiply defined operand found at\r\n" + buff;
+			m_err.RecordError(errorMsg);
 		}
 		else if (m_inst.GetOpCode() == "org" || m_inst.GetOpCode() == "ds") {
 			cout << "\t\t";
@@ -112,10 +149,11 @@ void Assembler::PassII() {
 		else {
 			inst = opCode * 10000;
 			inst = inst + operand;
-			cout << setw(6) << setfill('0') << inst << "\t\t";
+			cout << right << setw(6) << setfill('0') << inst << "\t\t";
 		}
 
 		cout << buff << endl;
+		//cout << "label : " << m_inst.GetLabel() << " opcode: " << opCode << " operand: " << operand << endl;
 		// Compute the location of the next instruction.
 		loc = m_inst.LocationNextInstruction(loc);
 	}

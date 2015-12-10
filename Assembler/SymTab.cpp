@@ -36,11 +36,18 @@ SymbolTable::DisplaySymbolTable()
 {
 	map<string, int>::iterator st;
 	int i = 0;
-	cout << "SYMBOL#\tSYMBOL\tLOCATION" << endl;
+
+	cout << "---------SYMBOL TABLE-------------------------------------" << endl << endl;
+	cout << left << setw(10) << "SYMBOL#" 
+			<< setw(20) << "SYMBOL"
+			<< "LOCATION" << endl;
 	for (st = m_symbolTable.begin(); st != m_symbolTable.end(); st++, i++) {
-		cout << i << "\t" << st->first << "\t" << st->second << endl;
+		//cout << i << "\t" << st->first << "\t\t\t\t" << st->second << endl;
+		cout << left << setw(10) << i 
+				<< setw(20) << st->first 
+				<< st->second << endl;
 	}
-	cout << endl;
+	cout << endl << "-------------------------------------------------------" << endl;
 }
 
 bool
