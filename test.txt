@@ -3,7 +3,7 @@
 hi     read    x;comment immediately after statement
        load    x
  hay   store   y ; This is the another comment.
-       writea   x
+       write   x
        bp      hi
        halt
 ;test
