@@ -37,7 +37,7 @@ void Assembler::PassI()
 	for (; ; ) {
 		// Read the next line from the source file.
 		m_inst.reset();
-		string buff;
+		string buff = "";
 		if (!m_faccess.GetNextLine(buff)) {
 			return;
 		}
@@ -88,10 +88,10 @@ void Assembler::PassI()
 
 void Assembler::PassII() {
 	m_err.InitErrorReporting();	// Initializes the error recorder
-	string errorMsg;			// temp for error message
+	string errorMsg = "";		// temp for error message
 	int loc = 0;				// location of instructions to be generated
-	int opCode, operand;		// parsed opcode and operand in a line of code
-	int inst;					// Resulting machine language instruction
+	int opCode = 0, operand = 0;// parsed opcode and operand in a line of code
+	int inst = 0;					// Resulting machine language instruction
 	m_faccess.rewind();			// Resetting the file to read
 
 	cout << "---------TRANSLATION OF PROGRAM-----------------------------" << endl << endl;
