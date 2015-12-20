@@ -8,6 +8,7 @@
 #include "Instruction.h"
 #include "FileAccess.h"
 #include "Errors.h"
+#include "Emulator.h"
 
 class Assembler {
 
@@ -28,6 +29,14 @@ public:
 	void DisplayErrorMessages() { m_err.DisplayErrors();  }
 
 	// Run emulator on the translation.
+	void RunEmulator() { 
+		if (m_err.IsEmpty()) { 
+			m_emul.runProgram();
+		}
+		else {
+			cout << endl <<"-----EMULATOR CANNOT BE STARTED UNTIL ERROR LIST IS EMPTY-----" << endl << endl; 
+		}
+	};
 
 private:
 
@@ -35,5 +44,6 @@ private:
 	SymbolTable m_symtab;	// Symbol table object
 	Instruction m_inst;	    // Instruction object
 	Errors m_err;		//Error object
+	Emulator m_emul;	// Emulator
 };
 

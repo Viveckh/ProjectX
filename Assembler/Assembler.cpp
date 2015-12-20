@@ -149,6 +149,7 @@ void Assembler::PassII() {
 		else {
 			inst = opCode * 10000;
 			inst = inst + operand;
+			m_emul.insertMemory(loc, inst);
 			cout << right << setw(6) << setfill('0') << inst << "\t\t";
 		}
 
@@ -158,3 +159,4 @@ void Assembler::PassII() {
 		loc = m_inst.LocationNextInstruction(loc);
 	}
 }
+

@@ -4,7 +4,7 @@
 #ifndef _ERRORS_H
 #define _ERRORS_H
 
-#include <string>
+//#include <string>
 
 class Errors {
 
@@ -18,6 +18,14 @@ public:
 
 	// Displays the collected error message.
 	static void DisplayErrors();
+
+	// Checks if the error list is empty.
+	inline bool IsEmpty() {
+		if (m_ErrorMsgs.empty()) { 
+			return true;
+		};
+		return false;
+	};
 
 private:
 	static vector<string> m_ErrorMsgs;
