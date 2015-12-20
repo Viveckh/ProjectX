@@ -1,23 +1,37 @@
 //
-//		Implementation of the symbol table class.
+//	Implementation of the symbol table class.
 //
 #include "stdafx.h"
 #include "SymTab.h"
 
+/**/
 /*
-NAME
-	AddSymbol - adds a new symbol to the symbol table.
+	void SymbolTable::AddSymbol(string &a_symbol, int a_loc)
 
-SYNOPSIS
-	void AddSymbol( char *a_symbol, int a_loc );
+	NAME
+		AddSymbol - Adds a symbol to symbol table
 
-DESCRIPTION
-	This function will place the symbol "a_symbol" and its location "a_loc"
-	in the symbol table.
+	SYNOPSIS
+		void SymbolTable::AddSymbol(string &a_symbol, int a_loc);
+		a_symbol	->	The symbol to be added to the table
+		a_loc		->	Location of the symbol
+	
+	DESCRIPTION
+		Adds a symbol to the SymbolTable. 
+		If it already exists, changes its address to -999 to indicate it is multiply defined
+
+	RETURNS
+		Nothing
+
+	AUTHOR
+		Vivek Pandey
+
+	DATE
+		7:00PM 11/26/2015
 */
+/**/
 
-void 
-SymbolTable::AddSymbol(string &a_symbol, int a_loc)
+void SymbolTable::AddSymbol(string &a_symbol, int a_loc)
 {
 	// If the symbol is already in the symbol table, record it as multiply defined.
 	map<string, int>::iterator st;
@@ -27,12 +41,36 @@ SymbolTable::AddSymbol(string &a_symbol, int a_loc)
 		st->second = multiplyDefinedSymbol;
 		return;
 	}
-	// Record a the  location in the symbol table.
+	// Or else, normally record the symbol with its location
 	m_symbolTable[a_symbol] = a_loc;
 }
 
-void
-SymbolTable::DisplaySymbolTable()
+/**/
+/*
+	void SymbolTable::DisplaySymbolTable()
+
+	NAME
+		DisplaySymbolTable - Displays the symbol table
+
+	SYNOPSIS
+		void SymbolTable::DisplaySymbolTable();
+
+	DESCRIPTION
+		As the name suggests, displays the symbol table on the console in below format:
+		Symbol no.	->	Symbol	->	Address
+
+	RETURNS
+		Nothing
+
+	AUTHOR
+		Vivek Pandey
+
+	DATE
+		7:00PM 11/26/2015
+*/
+/**/
+
+void SymbolTable::DisplaySymbolTable()
 {
 	map<string, int>::iterator st;
 	int i = 0;
@@ -42,7 +80,6 @@ SymbolTable::DisplaySymbolTable()
 			<< setw(20) << "SYMBOL"
 			<< "LOCATION" << endl;
 	for (st = m_symbolTable.begin(); st != m_symbolTable.end(); st++, i++) {
-		//cout << i << "\t" << st->first << "\t\t\t\t" << st->second << endl;
 		cout << left << setw(10) << i 
 				<< setw(20) << st->first 
 				<< st->second << endl;
@@ -50,8 +87,32 @@ SymbolTable::DisplaySymbolTable()
 	cout << endl << "-------------------------------------------------------" << endl;
 }
 
-bool
-SymbolTable::LookupSymbol(string &a_symbol)
+/**/
+/*
+	bool SymbolTable::LookupSymbol(string &a_symbol)
+
+	NAME
+		LookupSymbol - Looks up if a symbol exists in SymbolTable
+	
+	SYNOPSIS
+		bool SymbolTable::LookupSymbol(string &a_symbol);
+		a_symbol	->	The Symbol to look up
+
+	DESCRIPTION
+		Looks up if a symbol exists in the SymbolTable
+
+	RETURNS
+		True if found, false if not found
+
+	AUTHOR
+		Vivek Pandey
+
+	DATE
+		7:00PM 11/26/2015
+*/
+/**/
+
+bool SymbolTable::LookupSymbol(string &a_symbol)
 {
 	if (m_symbolTable.find(a_symbol) == m_symbolTable.end()) {
 		return false;
@@ -60,6 +121,31 @@ SymbolTable::LookupSymbol(string &a_symbol)
 		return true; 
 	}
 }
+
+/**/
+/*
+	int SymbolTable::LookupLocation(string a_symbol)
+
+	NAME
+		LookupLocation - Looks up the location of a symbol in SymbolTable
+
+	SYNOPSIS
+		int SymbolTable::LookupLocation(string a_symbol);
+		a_symbol	->	The Symbol to look up
+
+	DESCRIPTION
+		Looks up the location of a symbol in SymbolTable
+
+	RETURNS
+		The location of the symbol
+
+	AUTHOR
+		Vivek Pandey
+
+	DATE
+		7:00PM 11/26/2015
+*/
+/**/
 
 int SymbolTable::LookupLocation(string a_symbol) {
 	map<string, int>::iterator st;

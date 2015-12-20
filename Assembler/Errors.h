@@ -1,20 +1,35 @@
 //
-// Class to manage error reporting. Note: all members are static so we can access them anywhere.
+// Errors Class to manage error reporting. All members are static so we can access them anywhere.
 //
-#ifndef _ERRORS_H
-#define _ERRORS_H
+#pragma once
 
-//#include <string>
+/**/
+/*
+	NAME
+		Errors class - Manages errors found while translation
+
+	DESCRIPTION
+		Manages error reporting. All members are static so we can access them anywhere
+	
+	AUTHOR
+		Vivek Pandey
+
+	DATE
+		6:30PM 11/25/2015
+*/
+/**/
 
 class Errors {
-
 public:
-
 	// Initializes error reports.
-	static void InitErrorReporting();
+	static void InitErrorReporting() {
+		m_ErrorMsgs.clear();
+	}
 
 	// Records an error message.
-	static void RecordError(string &a_emsg);
+	static void RecordError(string &a_emsg) {
+		m_ErrorMsgs.push_back(a_emsg);
+	}
 
 	// Displays the collected error message.
 	static void DisplayErrors();
@@ -28,6 +43,5 @@ public:
 	};
 
 private:
-	static vector<string> m_ErrorMsgs;
+	static vector<string> m_ErrorMsgs;	// Storage for error messages
 };
-#endif

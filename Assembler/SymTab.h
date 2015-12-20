@@ -1,15 +1,31 @@
 //
-//		Symbol table class.
+//	SymbolTable - Maintains a table of symbols and their corresponding addresses
 //
 #pragma once
 
+/**/
+/*
+	NAME
+		SymbolTable - Maintains a table of symbols and their addresses
 
-// This class is our symbol table.
+	DESCRIPTION
+		Maintains a table of symbols and their corresponding addresses
+
+	AUTHOR
+		Vivek Pandey
+
+	DATE
+		9:00PM 11/29/2015
+*/
+/**/
+
 class SymbolTable {
 
 public:
-	// Get rid of constructor and destructor if you don't need them.
+	// Constructor
 	SymbolTable() {};
+
+	// Destructor
 	~SymbolTable() {};
 
 	const int multiplyDefinedSymbol = -999;
@@ -23,11 +39,9 @@ public:
 	// Lookup a symbol in the symbol table.
 	bool LookupSymbol(string &a_symbol);
 
+	// Lookup the location of a symbol
 	int LookupLocation(string a_symbol);
 
 private:
-
-	// This is the actual symbol table.  The symbol is the key to the map.
-	map<string, int> m_symbolTable;
-
+	map<string, int> m_symbolTable;		// Symbol table
 };
