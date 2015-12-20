@@ -1,35 +1,44 @@
 //
-//      Implementation of the Assembler class.
+//	Implementation of the Assembler class.
 //
 #include "stdafx.h"
 #include "Assembler.h"
 
-// Constructor for the assembler.  Note: we are passing argc and argv to the file access constructor.
-Assembler::Assembler(int argc, char *argv[])
-	: m_faccess(argc, argv)
-{
-	// Nothing else to do here.
-}
+/**/
+/*
+	Assembler::PassI()
 
-// Destructor currently does nothing.  You might need to add something.
-Assembler::~Assembler()
-{
-}
+	NAME
+		PassI - establishes the location of the labels
 
-// Pass I establishes the location of the labels.  You will do a better function comments.
+	SYNOPSIS
+		Assembler::PassI();
+
+	DESCRIPTION
+		Parses the assembly code and establishes the location of the labels,
+		and adds the symbols with their respective addresses to the symbol table
+
+	RETURNS
+		Nothing
+
+	AUTHOR
+		Vivek Pandey
+
+	DATE
+	11:00PM 11/19/2015
+*/
+/**/
+
 void Assembler::PassI()
 {
-	int loc = 0;        // Tracks the location of the instructions to be generated.
+	int loc = 0;	// Tracks the location of the instructions to be generated
 
-						// Successively process each line of source code.
+	// Successively process each line of source code.
 	for (; ; ) {
-		m_inst.reset();
 		// Read the next line from the source file.
+		m_inst.reset();
 		string buff;
 		if (!m_faccess.GetNextLine(buff)) {
-
-			// If there are no more lines, we are missing an end statement.
-			// We will let this error be reported by Pass II.
 			return;
 		}
 	
@@ -37,38 +46,62 @@ void Assembler::PassI()
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
 
 		// If this is an end statement, there is nothing left to do in pass I.
-		// Pass II will determine if the end is the last statement.
 		if (st == Instruction::ST_End) return;
 
-		// Labels can only be on machine language and assembler language
-		// instructions.
+		// Skip to next line if this is not a machine or assembly instruction
 		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) continue;
 
-		// If the instruction has a label, record it and its location in the
-		// symbol table.
+		// If the instruction has a label, record it and its location in the symbol table.
 		if (m_inst.isLabel()) {
-
 			m_symtab.AddSymbol(m_inst.GetLabel(), loc);
 		}
+
 		// Compute the location of the next instruction.
 		loc = m_inst.LocationNextInstruction(loc);
 	}
 }
 
+/**/
+/*
+	Assembler::PassII()
+
+	NAME
+		PassII -Translates the assembly code, records errors
+
+	SYNOPSIS
+		Assembler::PassII();
+
+	DESCRIPTION
+		Parses the assembly code line-by-line and generates machine language instructions,
+		and records any errors it comes across while translating the code.
+
+	RETURNS
+		Nothing
+
+	AUTHOR
+		Vivek Pandey
+
+	DATE
+		11:00PM 11/19/2015
+*/
+/**/
+
 void Assembler::PassII() {
-	m_err.InitErrorReporting();
-	string errorMsg;
-	int loc = 0;
-	int opCode, operand;
-	int inst;
-	m_faccess.rewind();
+	m_err.InitErrorReporting();	// Initializes the error recorder
+	string errorMsg;			// temp for error message
+	int loc = 0;				// location of instructions to be generated
+	int opCode, operand;		// parsed opcode and operand in a line of code
+	int inst;					// Resulting machine language instruction
+	m_faccess.rewind();			// Resetting the file to read
 
 	cout << "---------TRANSLATION OF PROGRAM-----------------------------" << endl << endl;
 	cout << "LOC\tCONTENT\t\tORIGINAL STATEMENT" << endl;
 	
+	// Process a line at a time
 	for (; ; ) {	
+		
+		// STEP 1: Read the next line from the source file.
 		m_inst.reset();
-		// Read the next line from the source file.
 		string buff;
 		if (!m_faccess.GetNextLine(buff)) {
 			errorMsg = "File ended without an END statement";
@@ -77,29 +110,29 @@ void Assembler::PassII() {
 			return;
 		}
 
-		// Parse the line and get the instruction type.
+		// STEP 2: Parse the line and get the instruction type.
 		Instruction::InstructionType st = m_inst.ParseInstruction(buff);
 
-		// If this is an end statement,
-		// Determine if the end is the last statement.
+		// STEP 3: If this is an end statement, determine if the end is the last statement & return
 		if (st == Instruction::ST_End) {
 			if (m_faccess.GetNextLine(buff)) {
 				errorMsg = "Statements found after END opcode";
 				m_err.RecordError(errorMsg);
 			}
-			cout << "\t\t\t" << buff << endl << endl;
+			cout << "\t\t\t" << buff 
+				<< endl << endl;
 			cout << endl << "--------------------------------------------------------" << endl;
 			return;
 		}
 		
+		// STEP 4: Check the validity of parsed opCode
 		opCode = m_inst.GetNumOpCode();
 		if ((opCode < 0 || opCode > 13) && (st != Instruction::ST_Comment && buff.find_first_not_of(' ') != string::npos)) {
 			errorMsg = "Illegal Opcode\r\n" + buff;
 			m_err.RecordError(errorMsg);
 		}
 
-		// Labels can only be on machine language and assembler language
-		// instructions.
+		// STEP 5: Jump to next line if this is not a machine or assembly instruction
 		if (st != Instruction::ST_MachineLanguage && st != Instruction::ST_AssemblerInstr) {
 			cout << "\t\t\t" << buff << endl;
 			continue;
@@ -107,6 +140,7 @@ void Assembler::PassII() {
 
 		cout << loc << "\t";
 
+		// STEP 6: Check the validity of the parsed label name
 		if (m_inst.GetLabel() != "") {
 			if (strlen(m_inst.GetLabel().c_str()) > 10) {
 				errorMsg = "Too Long Labelname\r\n" + buff;
@@ -118,6 +152,7 @@ void Assembler::PassII() {
 			}
 		}
 
+		// STEP 7: Get the parsed operand's value
 		if (m_inst.isNumericOperand()) {
 			operand = m_inst.GetOperandValue();
 		}
@@ -128,16 +163,17 @@ void Assembler::PassII() {
 			operand = 0;
 		}
 
+		// STEP 8: Check the validity of the parsed operand
 		if (operand > 999999) {
 			errorMsg = "Operand Value too high\r\n" + buff;
 			m_err.RecordError(errorMsg);
 		}
-
 		if (operand == 0 && (m_inst.GetOpCode() != "halt" && m_inst.GetOpCode() != "end")) {
 			errorMsg = "Operand value cannot be null/undefined\r\n" + buff;
 			m_err.RecordError(errorMsg);
 		}
 
+		// STEP 9: Generate machine language instruction and store it in memory
 		if (operand == -999) {
 			errorMsg = "Multiply defined operand found at\r\n" + buff;
 			m_err.RecordError(errorMsg);
@@ -152,9 +188,10 @@ void Assembler::PassII() {
 			cout << right << setw(6) << setfill('0') << inst << "\t\t";
 		}
 
+		// Print the orginal line of code
 		cout << buff << endl;
-		//cout << "label : " << m_inst.GetLabel() << " opcode: " << opCode << " operand: " << operand << endl;
-		// Compute the location of the next instruction.
+
+		// STEP 10: Compute the location of the next instruction.
 		loc = m_inst.LocationNextInstruction(loc);
 	}
 }
