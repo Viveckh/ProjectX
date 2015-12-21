@@ -50,5 +50,5 @@ int main(int argc, char *argv[]) {
 	//Runs the emulator (if no errors exist)
 	assem.RunEmulator();
 
-	system("pause");
+	return 0;
 }
